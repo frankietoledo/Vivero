@@ -241,7 +241,8 @@ public class Principal extends JFrame {
 		Articulo art= new Articulo();
 		art.setNombre((String)modelo.getValueAt(table.getSelectedRow(), 0));
 		String s=(String)modelo.getValueAt(table.getSelectedRow(), 1);
-		s=s.replaceAll(".", "");
+		int indice=s.indexOf('.');
+		s=s.substring(0, indice)+s.substring(indice+1,s.length());
 		s=s.replace(',','.');
 		art.setPrecio(Float.valueOf(s));
 		art.setCategoria((String)modelo.getValueAt(table.getSelectedRow(), 2));
