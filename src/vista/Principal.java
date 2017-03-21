@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import java.awt.Font;
 import java.sql.PreparedStatement;
@@ -42,6 +43,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowEvent;
+import javax.swing.JRadioButton;
 
 public class Principal extends JFrame {
 
@@ -52,10 +54,18 @@ public class Principal extends JFrame {
 	private Coordinador miCoordinador;
 	private JButton btnBorrarArticulo = new JButton("Borrar Articulo");
 	private JButton btnEditarArticulo = new JButton("Editar Articulo");
+	private JRadioButton rbtnCategoria = new JRadioButton("Categoria");
+	private JRadioButton rbtnNombre = new JRadioButton("Nombre");
+	private ButtonGroup grupoDeBotones = new ButtonGroup();
+	
 	/**
 	 * Create the frame.
 	 */
 	public Principal() {
+		rbtnNombre.setSelected(true);
+		grupoDeBotones.add(rbtnCategoria);
+		grupoDeBotones.add(rbtnNombre);
+		
 		btnBorrarArticulo.setEnabled(false);
 		btnEditarArticulo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -74,7 +84,7 @@ public class Principal extends JFrame {
 		setResizable(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Principal.class.getResource("/vista/iconos/rose 64.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1024, 598);
+		setBounds(100, 100, 1024, 641);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -92,7 +102,7 @@ public class Principal extends JFrame {
 		contentPane.add(lblListaDeArticulos);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 163, 741, 396);
+		scrollPane.setBounds(10, 176, 741, 426);
 		contentPane.add(scrollPane);
 		
 		
@@ -102,6 +112,13 @@ public class Principal extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				if(table.getSelectedRow()!=-1){
+					btnBorrarArticulo.setEnabled(true);
+					btnEditarArticulo.setEnabled(true);
+				}
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
 				if(table.getSelectedRow()!=-1){
 					btnBorrarArticulo.setEnabled(true);
 					btnEditarArticulo.setEnabled(true);
@@ -159,12 +176,12 @@ public class Principal extends JFrame {
 		});
 		btnNuevoArticulo.setIcon(new ImageIcon(Principal.class.getResource("/vista/iconos/addGreen32.png")));
 		btnNuevoArticulo.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnNuevoArticulo.setBounds(779, 206, 219, 40);
+		btnNuevoArticulo.setBounds(779, 264, 219, 40);
 		contentPane.add(btnNuevoArticulo);
 
 		btnEditarArticulo.setIcon(new ImageIcon(Principal.class.getResource("/vista/iconos/edit32.png")));
 		btnEditarArticulo.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnEditarArticulo.setBounds(779, 257, 219, 40);
+		btnEditarArticulo.setBounds(779, 315, 219, 40);
 		contentPane.add(btnEditarArticulo);
 		
 		btnBorrarArticulo.addActionListener(new ActionListener() {
@@ -177,7 +194,7 @@ public class Principal extends JFrame {
 		});
 		btnBorrarArticulo.setIcon(new ImageIcon(Principal.class.getResource("/vista/iconos/delete32.png")));
 		btnBorrarArticulo.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnBorrarArticulo.setBounds(779, 308, 219, 40);
+		btnBorrarArticulo.setBounds(779, 366, 219, 40);
 		contentPane.add(btnBorrarArticulo);
 		
 		JButton btnNuevaCategoria = new JButton("Nueva Categoria");
@@ -188,7 +205,7 @@ public class Principal extends JFrame {
 		});
 		btnNuevaCategoria.setIcon(new ImageIcon(Principal.class.getResource("/vista/iconos/addBlue32.png")));
 		btnNuevaCategoria.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnNuevaCategoria.setBounds(779, 359, 219, 40);
+		btnNuevaCategoria.setBounds(779, 417, 219, 40);
 		contentPane.add(btnNuevaCategoria);
 		
 		JLabel label = new JLabel("");
@@ -228,13 +245,36 @@ public class Principal extends JFrame {
 		});
 		btnEditarCategorias.setIcon(new ImageIcon(Principal.class.getResource("/vista/iconos/check32.png")));
 		btnEditarCategorias.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnEditarCategorias.setBounds(779, 410, 219, 40);
+		btnEditarCategorias.setBounds(779, 468, 219, 40);
 		contentPane.add(btnEditarCategorias);
 		
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setOrientation(SwingConstants.VERTICAL);
-		separator_1.setBounds(761, 109, 2, 450);
+		separator_1.setBounds(761, 176, 2, 426);
 		contentPane.add(separator_1);
+		
+		rbtnCategoria.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		rbtnCategoria.setBounds(887, 129, 111, 23);
+		contentPane.add(rbtnCategoria);
+		
+		rbtnNombre.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		rbtnNombre.setBounds(776, 129, 109, 23);
+		contentPane.add(rbtnNombre);
+		
+		JLabel lblBuscarPor = new JLabel("Buscar por:");
+		lblBuscarPor.setHorizontalAlignment(SwingConstants.CENTER);
+		lblBuscarPor.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblBuscarPor.setBounds(761, 98, 219, 24);
+		contentPane.add(lblBuscarPor);
+		
+		JSeparator separator_2 = new JSeparator();
+		separator_2.setBounds(20, 163, 988, 2);
+		contentPane.add(separator_2);
+		
+		JSeparator separator_3 = new JSeparator();
+		separator_3.setOrientation(SwingConstants.VERTICAL);
+		separator_3.setBounds(761, 104, 2, 48);
+		contentPane.add(separator_3);
 	}
 
 	protected Articulo obtenerArticuloDesdeTabla() {
@@ -242,7 +282,9 @@ public class Principal extends JFrame {
 		art.setNombre((String)modelo.getValueAt(table.getSelectedRow(), 0));
 		String s=(String)modelo.getValueAt(table.getSelectedRow(), 1);
 		int indice=s.indexOf('.');
-		s=s.substring(0, indice)+s.substring(indice+1,s.length());
+		if (indice!=-1){
+			s=s.substring(0, indice)+s.substring(indice+1,s.length());
+		}
 		s=s.replace(',','.');
 		art.setPrecio(Float.valueOf(s));
 		art.setCategoria((String)modelo.getValueAt(table.getSelectedRow(), 2));

@@ -96,6 +96,13 @@ public class DetalleCategorias extends JFrame {
 					btnEditarCategoria.setEnabled(true);
 				}
 			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if(table.getSelectedRow()!=-1){
+					btnBorrarCategoria.setEnabled(true);
+					btnEditarCategoria.setEnabled(true);
+				}
+			}
 		});
 
 		table.setRowHeight(24);

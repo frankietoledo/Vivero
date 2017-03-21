@@ -102,13 +102,13 @@ public class DetalleArticulo extends JFrame implements Cloneable {
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//compararArticulos devuelve true si son iguales
-				if (compararArticulos()==false){
-					miCoordinador.actualizarArticulo(art);
+				if (compararArticulos()){
 					tfNombre.setText("");
 					tfPrecio.setText("");
 					cbCategoria.setSelectedIndex(0);
 					dispose();
 				}else{
+					miCoordinador.actualizarArticulo(art);
 					tfNombre.setText("");
 					tfPrecio.setText("");
 					cbCategoria.setSelectedIndex(0);
@@ -125,6 +125,7 @@ public class DetalleArticulo extends JFrame implements Cloneable {
 		btnCancelar.setIcon(new ImageIcon(DetalleArticulo.class.getResource("/vista/iconos/cancel32.png")));
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				dispose();
 			}
 		});
 		btnCancelar.setFont(new Font("Tahoma", Font.PLAIN, 22));
@@ -148,19 +149,18 @@ public class DetalleArticulo extends JFrame implements Cloneable {
 		contentPane.add(lblYaExisteEse);
 	}
 	protected boolean compararArticulos() {
-		art.setNombre(tfNombre.getText());
+		art.setNombre(tfNombre.getText().trim().toUpperCase());
 		art.setId(miCoordinador.obtenerIdArticulo(art.getNombre()));
 		art.setPrecio(Float.parseFloat(tfPrecio.getText()));
-		art.setCategoria((String)cbCategoria.getSelectedItem());
+		String nombreCat=(String)cbCategoria.getSelectedItem();
+		art.setCategoria(nombreCat.trim().toUpperCase());
 		copia.setId(art.getId());
 
 		System.out.println(art.toString());
 		System.out.println(copia.toString());
 		if (art.equals(copia)){
-			System.out.println("son iguales");
 			return true;
 		}
-		System.out.println("no son iguales");
 		return false;
 	}
 	public void cargarCampos(){

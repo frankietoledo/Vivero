@@ -86,7 +86,7 @@ public class ArticuloDao {
 			PreparedStatement st = con.getConnection().prepareStatement("UPDATE categorias SET nombreCat = (?) WHERE nombreCat = (?);");
 			st.setString(1, nuevo);
 			st.setString(2, viejo);
-			st.execute();
+			st.executeUpdate();
 			JOptionPane.showMessageDialog(null, "Se actualizo ");
 			
 		} catch (SQLException e) {
@@ -156,14 +156,17 @@ public class ArticuloDao {
 			PreparedStatement st = con.getConnection().prepareStatement("select * from categorias where nombreCat=(?);");
 			st.setString(1, art.getCategoria());
 			ResultSet rs = st.executeQuery();
-			idCat=rs.getInt("idCat");		
+			while (rs.next()){
+				idCat=rs.getInt("idCat");
+			}
 			//Esta consulta es para actualizar el art
-			st = con.getConnection().prepareStatement("UPDATE articulos SET nombreCat=?,precioArt=(?),categoriaArt=(?) WHERE idArt = (?);");
+			System.out.println(art.getNombre());
+			st= con.getConnection().prepareStatement("Update articulos set nombreArt=?,precioArt=?,categoriaArt=? where idArt=?;");
 			st.setString(1, art.getNombre());
 			st.setFloat(2, art.getPrecio());
 			st.setInt(3, idCat);
 			st.setInt(4, art.getId());
-			st.execute();
+			st.executeUpdate();
 			JOptionPane.showMessageDialog(null, "Se actualizo ");
 		} catch (SQLException e) {
 			e.printStackTrace();
