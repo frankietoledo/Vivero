@@ -1,10 +1,25 @@
 package vista;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -12,28 +27,6 @@ import javax.swing.table.DefaultTableModel;
 import controlador.Coordinador;
 import modelo.Conexion;
 import modelo.Constantes;
-
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
-import javax.swing.JScrollPane;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
 
 public class DetalleCategorias extends JFrame {
 
@@ -47,6 +40,7 @@ public class DetalleCategorias extends JFrame {
 	
 	public DetalleCategorias() {
 		btnBorrarCategoria.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que queres borrarlo?", getTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 				if(valor==0){
@@ -54,8 +48,10 @@ public class DetalleCategorias extends JFrame {
 				}
 			}
 		});
+				
 		btnBorrarCategoria.setEnabled(false);
 		btnEditarCategoria.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				miCoordinador.editarCategoria((String)modelo.getValueAt(table.getSelectedRow(),0));
 			}
@@ -95,6 +91,9 @@ public class DetalleCategorias extends JFrame {
 					btnBorrarCategoria.setEnabled(true);
 					btnEditarCategoria.setEnabled(true);
 				}
+				if (e.getClickCount()==2) {
+					miCoordinador.editarCategoria((String)modelo.getValueAt(table.getSelectedRow(),0));
+				}
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -132,6 +131,7 @@ public class DetalleCategorias extends JFrame {
 		
 		JButton btnNuevaCategoria = new JButton("Nueva Categoria");
 		btnNuevaCategoria.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				miCoordinador.nuevaCategoria();
 			}
@@ -153,6 +153,7 @@ public class DetalleCategorias extends JFrame {
 		
 		JButton btnCerrar = new JButton("Cerrar");
 		btnCerrar.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 			dispose();
 			}

@@ -98,4 +98,7 @@ public  class Coordinador {
 	public int obtenerIdArticulo(String nombre) {
 		return miLogica.obtenerIdArticulo(nombre);
 	}
+	public boolean consultarSiArticuloExiste(String nombre){
+		return miLogica.consultarSiArticuloExiste(nombre);
+	}
 }

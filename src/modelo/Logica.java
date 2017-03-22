@@ -36,4 +36,7 @@ public class Logica {
 	public int obtenerIdArticulo(String nombre) {
 		return articuloDao.obtenerIDArticulo(nombre);
 	}
+	public boolean consultarSiArticuloExiste(String nombre){
+		return articuloDao.consultarSiArticuloExiste(nombre);
+	}
 }

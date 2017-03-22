@@ -1,26 +1,25 @@
 package vista;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.KeyEventPostProcessor;
+import java.awt.KeyboardFocusManager;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import controlador.Coordinador;
-
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.JSeparator;
-import javax.swing.ImageIcon;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import java.awt.Window.Type;
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.SwingConstants;
-import java.awt.Color;
 
 public class NuevaCategoria extends JFrame {
 
@@ -33,6 +32,18 @@ public class NuevaCategoria extends JFrame {
 	 * Create the frame.
 	 */
 	public NuevaCategoria() {
+		
+		//Este bloque de codigo es para que cuando se aprete ESC se cierre la ventana
+		KeyboardFocusManager kb = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		kb.addKeyEventPostProcessor(new KeyEventPostProcessor(){
+			@Override
+			public boolean postProcessKeyEvent(KeyEvent e){
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+				dispose();
+  				return true;
+		    }
+    	});
+		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(NuevaCategoria.class.getResource("/vista/iconos/flowers128.png")));
 		setResizable(false);
 		setTitle("Vivero Sue\u00F1o Verde");
@@ -69,6 +80,7 @@ public class NuevaCategoria extends JFrame {
 		
 		JButton button = new JButton("Guardar");
 		button.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				String nombre = tfNombre.getText().trim().toUpperCase();
 				System.out.println(nombre);
@@ -91,6 +103,7 @@ public class NuevaCategoria extends JFrame {
 		
 		JButton button_1 = new JButton("Cancelar");
 		button_1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}

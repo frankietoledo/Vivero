@@ -16,6 +16,7 @@ public final class Constantes {
 	
 	//sentencias sql
 	public static final String Consultar_si_Categoria_Existe="select "+NOMBRE_DE_CATEGORIA+" from "+CATEGORIAS_DB+" where "+NOMBRE_DE_CATEGORIA+"= (?);";
+	public static final String Consultar_si_Articulo_Existe = "SELECT "+NOMBRE_DE_ARTICULO+" FROM "+ARTICULOS_DB+" WHERE "+NOMBRE_DE_ARTICULO+" = (?);";	
 
 	public static final String Insertar_Nombre_de_Categoria="INSERT INTO "+CATEGORIAS_DB+" ("+NOMBRE_DE_CATEGORIA+") VALUES (?) ;";
 	public static final String Insertar_en_articulos_Nombre_Precio_Categoria ="insert into "+ARTICULOS_DB+" ("+NOMBRE_DE_ARTICULO+","+PRECIO_DE_ARTICULO+","+CATEGORIA_DEL_ARTICULO+") values (?,?,?);";
@@ -33,6 +34,6 @@ public final class Constantes {
 	public static final String Update_NombreCategoria = "UPDATE "+CATEGORIAS_DB+" SET "+NOMBRE_DE_CATEGORIA+" = (?) WHERE "+NOMBRE_DE_CATEGORIA+" = (?) ;";
 	
 	public static final String Delete_Categoria_Where_Nobre = "DELETE FROM "+CATEGORIAS_DB+" WHERE "+NOMBRE_DE_CATEGORIA+"= (?) ;";
-	public static final String Delete_Articulo_Where_Nombre = "DELETE FROM "+ARTICULOS_DB+" WHERE "+NOMBRE_DE_ARTICULO+"= (?) ;";	
+	public static final String Delete_Articulo_Where_Nombre = "DELETE FROM "+ARTICULOS_DB+" WHERE "+NOMBRE_DE_ARTICULO+"= (?) ;";
 	
 }

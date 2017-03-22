@@ -7,10 +7,27 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class ArticuloDao {
-	//Clase para generar acceso a la base de datos sobre operaciones de articulos
 	
-	//Borrar una cat
-	//Consultar si existe la cat
+	public boolean consultarSiArticuloExiste(String nombre){
+		Conexion con = new Conexion();
+		try {
+			con.conectar();
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Consultar_si_Articulo_Existe);
+			st.setString(1, nombre);
+			ResultSet rs = st.executeQuery();
+			while(rs.next()){
+				if (rs.getString(Constantes.NOMBRE_DE_ARTICULO)==nombre)
+					return true;			
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			e.getMessage();
+			return false;
+		}finally {
+			con.cerrar();
+		}
+	}
 	public boolean consultarSiCategoriaExiste(String nombre){
 		Conexion con = new Conexion();
 		try {
@@ -32,7 +49,6 @@ public class ArticuloDao {
 			con.cerrar();
 		}
 	}
-	//Guardar nueva categoria
 	public boolean guardarCategoria(String nombre){
 		Conexion con=new Conexion();
 		try {
@@ -50,9 +66,6 @@ public class ArticuloDao {
 			con.cerrar();
 		}
 	}
-	//Borrar un art
-	//Consultar si existe el art
-	//Guardar un art nuevo
 	public boolean guardarArticulo(Articulo art){
 		Conexion con=new Conexion();
 		try {

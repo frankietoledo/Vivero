@@ -1,24 +1,24 @@
 package vista;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.KeyEventPostProcessor;
+import java.awt.KeyboardFocusManager;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import controlador.Coordinador;
-
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.Color;
 
 public class EditarCategoria extends JFrame {
 
@@ -32,6 +32,18 @@ public class EditarCategoria extends JFrame {
 	 * Create the frame.
 	 */
 	public EditarCategoria() {
+		
+		//Este bloque de codigo es para que cuando se aprete ESC se cierre la ventana
+		KeyboardFocusManager kb = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		kb.addKeyEventPostProcessor(new KeyEventPostProcessor(){
+			@Override
+			public boolean postProcessKeyEvent(KeyEvent e){
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+				dispose();
+  				return true;
+		    }
+    	});
+		
 		lblYaExisteUna.setVisible(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(EditarCategoria.class.getResource("/vista/iconos/flowers128.png")));
 		setResizable(false);
@@ -50,6 +62,7 @@ public class EditarCategoria extends JFrame {
 		
 		tfnombre = new JTextField();
 		tfnombre.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				prepararParaActualizar(nombreViejo,tfnombre.getText());
 			}
@@ -61,6 +74,7 @@ public class EditarCategoria extends JFrame {
 		
 		JButton button = new JButton("Guardar");
 		button.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				prepararParaActualizar(nombreViejo,tfnombre.getText());
 			}
@@ -72,6 +86,7 @@ public class EditarCategoria extends JFrame {
 		
 		JButton btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}

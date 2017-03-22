@@ -2,11 +2,15 @@ package vista;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.KeyEventPostProcessor;
+import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.sql.PreparedStatement;
@@ -46,6 +50,18 @@ public class DetalleArticulo extends JFrame implements ItemListener {
 
 	
 	public DetalleArticulo() {
+		
+		//Este bloque de codigo es para que cuando se aprete ESC se cierre la ventana
+		KeyboardFocusManager kb = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		kb.addKeyEventPostProcessor(new KeyEventPostProcessor(){
+		      @Override
+		      public boolean postProcessKeyEvent(KeyEvent e){
+		      if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+		           dispose();
+		           return true;
+		      }
+		    });
+		
 		AutoCompleteDecorator.decorate(cbCategoria);
 		cbCategoria.addItemListener(this);
 		addWindowFocusListener(new WindowFocusListener() {
@@ -156,6 +172,35 @@ public class DetalleArticulo extends JFrame implements ItemListener {
 		lblYaExisteEse.setBounds(230, 90, 284, 25);
 		contentPane.add(lblYaExisteEse);
 		
+		tfPrecio.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyReleased(java.awt.event.KeyEvent e) {
+			
+			}
+
+			@Override
+			public void keyPressed(java.awt.event.KeyEvent e) {
+				
+			}
+
+			@Override
+			public void keyTyped(java.awt.event.KeyEvent e) {
+				int limite=10;
+				if (tfPrecio.getText().length()>limite)
+					e.consume();
+				if (!Character.isDigit(e.getKeyChar())){
+					if (e.getKeyChar()!= ',')
+						if (e.getKeyChar()!='.')
+							e.consume();
+					if (tfPrecio.getText().indexOf('.')!=-1)
+						e.consume();
+				}
+					
+			}
+			
+		});
+		//FINNNNNNNNNNNNNN DEL CREATE
 	}
 	protected boolean compararArticulos() {
 		art.setNombre(tfNombre.getText().trim().toUpperCase());
@@ -165,8 +210,6 @@ public class DetalleArticulo extends JFrame implements ItemListener {
 		art.setCategoria(nombreCat.trim().toUpperCase());
 		copia.setId(art.getId());
 
-		System.out.println(art.toString());
-		System.out.println(copia.toString());
 		if (art.equals(copia)){
 			return true;
 		}

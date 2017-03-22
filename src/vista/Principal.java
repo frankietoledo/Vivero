@@ -123,6 +123,9 @@ public class Principal extends JFrame {
 					btnBorrarArticulo.setEnabled(true);
 					btnEditarArticulo.setEnabled(true);
 				}
+				if (arg0.getClickCount()==2){
+					miCoordinador.nuevoDetalleArticulo(obtenerArticuloDesdeTabla());
+				}
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -150,7 +153,7 @@ public class Principal extends JFrame {
 		render.setHorizontalAlignment(SwingConstants.CENTER);
 		table.getColumnModel().getColumn(1).setCellRenderer(render);
 		table.setSelectionMode(NORMAL);
-		
+
 		// TABLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 		
 		
