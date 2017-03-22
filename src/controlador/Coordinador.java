@@ -1,15 +1,12 @@
 package controlador;
 
-import java.awt.Window;
-
-
 import modelo.Articulo;
 import modelo.Logica;
-import vista.Confirmacion;
 import vista.DetalleArticulo;
 import vista.DetalleCategorias;
+import vista.EditarCategoria;
 
-public class Coordinador {
+public  class Coordinador {
 	//Atributos
 	private modelo.Logica miLogica;
 	private vista.Principal miVentanaPrincipal;
@@ -18,7 +15,7 @@ public class Coordinador {
 	private EditarCategoria miEditarCategoria;
 	private DetalleCategorias miDetalleCategorias;
 	private DetalleArticulo miDetalleArticulo;
-	
+
 	
 	public void setDetalleArticulo(DetalleArticulo miDetalleArticulo){
 		this.miDetalleArticulo=miDetalleArticulo;
@@ -95,8 +92,8 @@ public class Coordinador {
 		miDetalleArticulo.setArticulo(obtenerArticuloDesdeTabla);
 		miDetalleArticulo.setVisible(true);
 	}
-	public void actualizarArticulo(Articulo art) {
-		miLogica.actualizarArticulo(art);
+	public void actualizarArticulo(Articulo art,String nombreViejo) {
+		miLogica.actualizarArticulo(art,nombreViejo);
 	}
 	public int obtenerIdArticulo(String nombre) {
 		return miLogica.obtenerIdArticulo(nombre);

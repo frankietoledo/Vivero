@@ -1,49 +1,43 @@
 package vista;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
-import controlador.Comprobador;
 import controlador.Coordinador;
 import modelo.Articulo;
 import modelo.Conexion;
-
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.SwingConstants;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JSeparator;
-import java.awt.Toolkit;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.InputMethodListener;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowFocusListener;
-import java.awt.event.WindowEvent;
-import javax.swing.JRadioButton;
+import modelo.Constantes;
 
 public class Principal extends JFrame {
 
@@ -57,26 +51,30 @@ public class Principal extends JFrame {
 	private JRadioButton rbtnCategoria = new JRadioButton("Categoria");
 	private JRadioButton rbtnNombre = new JRadioButton("Nombre");
 	private ButtonGroup grupoDeBotones = new ButtonGroup();
-	
+	private TableRowSorter TRF;
 	/**
 	 * Create the frame.
 	 */
 	public Principal() {
+		
 		rbtnNombre.setSelected(true);
 		grupoDeBotones.add(rbtnCategoria);
 		grupoDeBotones.add(rbtnNombre);
 		
 		btnBorrarArticulo.setEnabled(false);
 		btnEditarArticulo.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				miCoordinador.nuevoDetalleArticulo(obtenerArticuloDesdeTabla());
 			}
 		});
 		btnEditarArticulo.setEnabled(false);
 		addWindowFocusListener(new WindowFocusListener() {
+			@Override
 			public void windowGainedFocus(WindowEvent e) {
 				actualizarLista();
 			}
+			@Override
 			public void windowLostFocus(WindowEvent e) {
 			}
 		});
@@ -109,6 +107,15 @@ public class Principal extends JFrame {
 		///TABLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 		
 		table = new JTable();
+		modelo = new DefaultTableModel(){
+			 @Override
+			   public boolean isCellEditable(int fila, int columna) {
+			       return false; //Con esto conseguimos que la tabla no se pueda editar
+			   }
+		};
+		TRF=new TableRowSorter(modelo);
+		table.setRowSorter(TRF);
+		
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -125,14 +132,10 @@ public class Principal extends JFrame {
 				}
 			}
 		});
+		
 		table.setRowHeight(24);
 		table.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		modelo = new DefaultTableModel(){
-			 @Override
-			   public boolean isCellEditable(int fila, int columna) {
-			       return false; //Con esto conseguimos que la tabla no se pueda editar
-			   }
-		};
+		
 
 		table.setModel(modelo);
 		modelo.addColumn("Nombre");
@@ -151,16 +154,23 @@ public class Principal extends JFrame {
 		// TABLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 		
 		
-		
 		actualizarLista();
 		scrollPane.setViewportView(table);
-		
 		tfBusqueda = new JTextField();
 		tfBusqueda.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
+				int columna;
+				if (rbtnNombre.isSelected()){
+					columna=0;
+				}else{
+					columna=2;
+				}
 				if (tfBusqueda.getText().length()>=3){
-					miCoordinador.realizarBusqueda(tfBusqueda.getText());
+					filtrar(tfBusqueda.getText().trim().toUpperCase(),columna);
+					//miCoordinador.realizarBusqueda(tfBusqueda.getText());
+				}else{
+					filtrar("",columna);
 				}
 			}
 		});
@@ -170,6 +180,7 @@ public class Principal extends JFrame {
 		
 		JButton btnNuevoArticulo = new JButton("Nuevo Articulo");
 		btnNuevoArticulo.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				miCoordinador.nuevoArticulo();
 			}
@@ -185,6 +196,7 @@ public class Principal extends JFrame {
 		contentPane.add(btnEditarArticulo);
 		
 		btnBorrarArticulo.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int valor = JOptionPane.showConfirmDialog(null, "¿Seguro que queres borrarlo?", getTitle(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 				if(valor==0){
@@ -199,6 +211,7 @@ public class Principal extends JFrame {
 		
 		JButton btnNuevaCategoria = new JButton("Nueva Categoria");
 		btnNuevaCategoria.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				miCoordinador.nuevaCategoria();
 			}
@@ -239,6 +252,7 @@ public class Principal extends JFrame {
 		
 		JButton btnEditarCategorias = new JButton("Ver Categorias");
 		btnEditarCategorias.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 			miCoordinador.mostrarDetalleCategorias();
 			}
@@ -276,6 +290,9 @@ public class Principal extends JFrame {
 		separator_3.setBounds(761, 104, 2, 48);
 		contentPane.add(separator_3);
 	}
+	protected void filtrar(String text,int columna) {
+		TRF.setRowFilter(RowFilter.regexFilter(text,columna));		
+	}
 
 	protected Articulo obtenerArticuloDesdeTabla() {
 		Articulo art= new Articulo();
@@ -297,25 +314,17 @@ public class Principal extends JFrame {
 		Conexion con= new Conexion();
 		try {
 			con.conectar();
-			PreparedStatement st = con.getConnection().prepareStatement("select "
-					+
-					"nombreArt,precioArt,categorias.nombreCat FROM articulos JOIN categorias on articulos.categoriaArt=categorias.idCat order by nombreArt"
-					+ ";");
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Select_all_join_articulosYcategorias);
 			ResultSet rs = st.executeQuery();
-			
 			//codigo para ponerle 2 decimales a los float		
 			DecimalFormat df = new DecimalFormat();
 			df.setMinimumFractionDigits(2);
 			df.setMaximumFractionDigits(2);
-			
-			//Mediante una estructura con un while se va cargando la tabla elemento a elemento y atributo a atributo
 			while (rs.next()){
-				////Creamos un Objeto con tantos parámetros como datos retorne cada fila 
-                // de la consulta
 				Object[] fila = new Object[3];
-				fila[0]=rs.getString("nombreArt");
-				fila[1]=df.format(rs.getFloat("precioArt"));
-				fila[2]=rs.getString("nombreCat"); //se repite nombre porque hace referencia al nombre de la tabla categoria
+				fila[0]=rs.getString(Constantes.NOMBRE_DE_ARTICULO);
+				fila[1]=df.format(rs.getFloat(Constantes.PRECIO_DE_ARTICULO));
+				fila[2]=rs.getString(Constantes.NOMBRE_DE_CATEGORIA); 
 				modelo.addRow(fila);
 			}				
 			table.updateUI(); //actualizar la tabla por los cambios		

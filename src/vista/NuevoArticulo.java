@@ -1,39 +1,34 @@
 package vista;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import controlador.Coordinador;
 import modelo.Articulo;
 import modelo.Conexion;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.ImageIcon;
-import java.awt.Toolkit;
-import java.awt.Window.Type;
-import java.awt.Font;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.border.BevelBorder;
-import java.awt.Color;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.WindowFocusListener;
-import java.awt.event.WindowEvent;
+import modelo.Constantes;
 
 public class NuevoArticulo extends JFrame implements ItemListener {
 
@@ -47,10 +42,14 @@ public class NuevoArticulo extends JFrame implements ItemListener {
 	 * Create the frame.
 	 */
 	public NuevoArticulo() {
+		AutoCompleteDecorator.decorate(comboBoxCat);
+		comboBoxCat.setEditable(true);
 		addWindowFocusListener(new WindowFocusListener() {
+			@Override
 			public void windowGainedFocus(WindowEvent arg0) {
 				actualizarComboBox();
 			}
+			@Override
 			public void windowLostFocus(WindowEvent arg0) {
 			}
 		});
@@ -114,6 +113,7 @@ public class NuevoArticulo extends JFrame implements ItemListener {
 		
 		JButton btnNewButton = new JButton("Guardar");
 		btnNewButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Articulo art = obtenerArticulo();
 				miCoordinador.guardarArticulo(art);
@@ -126,31 +126,37 @@ public class NuevoArticulo extends JFrame implements ItemListener {
 		
 		JButton btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
+				tfNombre.setText("");
+				tfPrecio.setText("");
+				comboBoxCat.setSelectedItem(0);
 			}
 		});
 		btnCancelar.setIcon(new ImageIcon(NuevoArticulo.class.getResource("/vista/iconos/cancel32.png")));
 		btnCancelar.setFont(new Font("Tahoma", Font.PLAIN, 22));
 		btnCancelar.setBounds(358, 221, 188, 40);
 		contentPane.add(btnCancelar);
+		comboBoxCat.addItemListener(this);
 		actualizarComboBox();
 	}
 	
 	public void actualizarComboBox() {
 		comboBoxCat.removeAllItems();
-		comboBoxCat.addItemListener(this);
+//		miCoordinador.cargarComboBox(comboBoxCat);
+//		comboBoxCat.addItem("Agregar nueva categoria");
 		Conexion con = new Conexion();
 		try {
 			con.conectar();
-			PreparedStatement st = con.getConnection().prepareStatement("Select nombreCat from categorias order by nombreCat;");
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Select_NombreCat_from_CategoriasDB);
 			ResultSet rs = st.executeQuery();
 			String cadena;
 			while (rs.next()){
-				cadena = rs.getString("nombreCat");
+				cadena = rs.getString(Constantes.NOMBRE_DE_CATEGORIA);
 				comboBoxCat.addItem(cadena);
 			}
-			comboBoxCat.addItem(new String ("Agregar categoria"));
+			comboBoxCat.addItem("Agregar nueva categoria");
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Error al cargar el ComboBox");
 			e.printStackTrace();
@@ -160,7 +166,7 @@ public class NuevoArticulo extends JFrame implements ItemListener {
 	}
 	public Articulo obtenerArticulo() {
 		Articulo art = new Articulo();
-		art.setNombre(tfNombre.getText());
+		art.setNombre(tfNombre.getText().trim().toUpperCase());
 		art.setPrecio(Float.parseFloat(tfPrecio.getText()));
 		art.setCategoria(comboBoxCat.getSelectedItem().toString());
 		return art;
@@ -173,7 +179,7 @@ public class NuevoArticulo extends JFrame implements ItemListener {
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (comboBoxCat.getSelectedItem()!=null){
-			if (comboBoxCat.getSelectedItem().equals("Agregar categoria")){
+			if (comboBoxCat.getSelectedItem().equals("Agregar nueva categoria")){
 				miCoordinador.nuevaCategoria();
 			}
 		}

@@ -1,37 +1,38 @@
 package vista;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import controlador.Coordinador;
-import modelo.Articulo;
-import modelo.Conexion;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.SwingConstants;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.awt.event.WindowEvent;
 
-public class DetalleArticulo extends JFrame implements Cloneable {
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+
+import controlador.Coordinador;
+import modelo.Articulo;
+import modelo.Conexion;
+import modelo.Constantes;
+
+public class DetalleArticulo extends JFrame implements ItemListener {
 
 	private JPanel contentPane;
 	private JTextField tfPrecio;
@@ -41,13 +42,21 @@ public class DetalleArticulo extends JFrame implements Cloneable {
 	private Coordinador miCoordinador;
 	private JLabel lblYaExisteEse = new JLabel("Ya existe ese producto");
 	private Articulo copia=new Articulo();
+	private boolean estado=false;
 
 	
 	public DetalleArticulo() {
+		AutoCompleteDecorator.decorate(cbCategoria);
+		cbCategoria.addItemListener(this);
 		addWindowFocusListener(new WindowFocusListener() {
+			@Override
 			public void windowGainedFocus(WindowEvent arg0) {
-				cargarCampos();
+				if (estado==false){
+					cargarCampos();
+					estado=true;
+				}
 			}
+			@Override
 			public void windowLostFocus(WindowEvent arg0) {
 			}
 		});
@@ -100,20 +109,17 @@ public class DetalleArticulo extends JFrame implements Cloneable {
 		
 		JButton btnGuardar = new JButton("Guardar");
 		btnGuardar.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				//compararArticulos devuelve true si son iguales
-				if (compararArticulos()){
-					tfNombre.setText("");
-					tfPrecio.setText("");
-					cbCategoria.setSelectedIndex(0);
-					dispose();
-				}else{
-					miCoordinador.actualizarArticulo(art);
-					tfNombre.setText("");
-					tfPrecio.setText("");
-					cbCategoria.setSelectedIndex(0);
-					dispose();
+				if (compararArticulos()==false){
+					miCoordinador.actualizarArticulo(art,copia.getNombre());
 				}
+				tfNombre.setText("");
+				tfPrecio.setText("");
+				cbCategoria.setSelectedIndex(0);
+				estado=false;
+				dispose();
 			}
 		});
 		btnGuardar.setIcon(new ImageIcon(DetalleArticulo.class.getResource("/vista/iconos/accept32.png")));
@@ -124,7 +130,9 @@ public class DetalleArticulo extends JFrame implements Cloneable {
 		JButton btnCancelar = new JButton("Cancelar");
 		btnCancelar.setIcon(new ImageIcon(DetalleArticulo.class.getResource("/vista/iconos/cancel32.png")));
 		btnCancelar.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				estado=false;
 				dispose();
 			}
 		});
@@ -147,6 +155,7 @@ public class DetalleArticulo extends JFrame implements Cloneable {
 		lblYaExisteEse.setForeground(Color.RED);
 		lblYaExisteEse.setBounds(230, 90, 284, 25);
 		contentPane.add(lblYaExisteEse);
+		
 	}
 	protected boolean compararArticulos() {
 		art.setNombre(tfNombre.getText().trim().toUpperCase());
@@ -178,20 +187,20 @@ public class DetalleArticulo extends JFrame implements Cloneable {
 		Conexion con = new Conexion();
 		try {
 			con.conectar();
-			PreparedStatement st = con.getConnection().prepareStatement("Select nombreCat from categorias order by nombreCat;");
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Select_NombreCat_from_CategoriasDB);
 			ResultSet rs = st.executeQuery();
 			String cadena;
 			while (rs.next()){
-				cadena = rs.getString("nombreCat");
+				cadena = rs.getString(Constantes.NOMBRE_DE_CATEGORIA);
 				cbCategoria.addItem(cadena);
 			}
-			cbCategoria.addItem(new String ("Agregar categoria"));
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Error al cargar el ComboBox");
 			e.printStackTrace();
 		} finally {
 			con.cerrar();
-		}
+		}		
+		cbCategoria.addItem("Agregar nueva categoria");
 	}
 	public void setArticulo(Articulo obtenerArticuloDesdeTabla) {
 		this.art=obtenerArticuloDesdeTabla;
@@ -199,4 +208,12 @@ public class DetalleArticulo extends JFrame implements Cloneable {
 	public void setCoordinador(Coordinador miCoordinador) {
 		this.miCoordinador=miCoordinador;
 	}	
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		if (cbCategoria.getSelectedItem()!=null){
+			if (cbCategoria.getSelectedItem().equals("Agregar nueva categoria")){
+				miCoordinador.nuevaCategoria();
+			}
+		}
+	}
 }

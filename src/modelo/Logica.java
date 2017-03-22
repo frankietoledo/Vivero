@@ -1,10 +1,5 @@
 package modelo;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
-import javax.swing.JOptionPane;
-
 import controlador.Coordinador;
 
 public class Logica {
@@ -35,8 +30,8 @@ public class Logica {
 	public void borrarArticulo(String valueAt) {
 		articuloDao.borrarArticulo(valueAt);
 	}
-	public void actualizarArticulo(Articulo art) {
-		articuloDao.actualizarArticulo(art);
+	public void actualizarArticulo(Articulo art,String nombreViejo) {
+		articuloDao.actualizarArticulo(art,nombreViejo,articuloDao.obtenerIdCategoria(art));
 	}
 	public int obtenerIdArticulo(String nombre) {
 		return articuloDao.obtenerIDArticulo(nombre);

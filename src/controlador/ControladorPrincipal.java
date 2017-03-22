@@ -4,10 +4,12 @@ import modelo.Logica;
 import sun.management.snmp.util.MibLogger;
 import vista.DetalleArticulo;
 import vista.DetalleCategorias;
+import vista.EditarCategoria;
 
 public class ControladorPrincipal {
 	public static void iniciar(){
-		//inicializacion de las ventanas
+		//inicializacion de todas las clases
+		Coordinador miCoordinador = new Coordinador();
 		Logica miLogica=new Logica();
 		vista.Principal miVentanaPrincipal = new vista.Principal();
 		vista.NuevoArticulo miNuevoArticulo = new vista.NuevoArticulo();
@@ -15,7 +17,6 @@ public class ControladorPrincipal {
 		DetalleCategorias miDetalleCategorias = new DetalleCategorias();
 		EditarCategoria miEditarCategoria = new EditarCategoria();
 		DetalleArticulo miDetalleArticulo = new DetalleArticulo();
-		Coordinador miCoordinador = new Coordinador();
 		
 		//Establecer la relacion clase-coordinador
 		miLogica.setCoordinador(miCoordinador);

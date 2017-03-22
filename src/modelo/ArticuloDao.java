@@ -15,11 +15,11 @@ public class ArticuloDao {
 		Conexion con = new Conexion();
 		try {
 			con.conectar();
-			PreparedStatement st = con.getConnection().prepareStatement("select nombreCat from categorias where nombreCat=(?);");
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Consultar_si_Categoria_Existe);
 			st.setString(1, nombre);
 			ResultSet rs = st.executeQuery();
 			while (rs.next()){
-				if (nombre.equals((String)rs.getString("nombreCat"))){
+				if (nombre.equals(rs.getString(Constantes.NOMBRE_DE_CATEGORIA))){
 					return true;
 				}
 			}
@@ -37,8 +37,7 @@ public class ArticuloDao {
 		Conexion con=new Conexion();
 		try {
 			con.conectar();
-			PreparedStatement st = con.getConnection().prepareStatement("INSERT INTO categorias "
-					+"(nombreCat) VALUES (?);");
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Insertar_Nombre_de_Categoria);
 			st.setString(1,nombre);
 			st.execute();
 			JOptionPane.showMessageDialog(null, "Categoria guardada.");
@@ -60,12 +59,12 @@ public class ArticuloDao {
 			con.conectar();
 			//primero necesitamos el id de la categoria que eligio
 			int idCat=0;
-			PreparedStatement st = con.getConnection().prepareStatement("select * from categorias where nombreCat=(?);");
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Seleccionar_todo_desde_Categorias_Where_NOMBRE);
 			st.setString(1, art.getCategoria());
 			ResultSet rs = st.executeQuery();
-			idCat=rs.getInt("idCat");
-			st= con.getConnection().prepareStatement("insert into articulos (nombreArt,precioArt,categoriaArt) values (?,?,?);");
-			st.setString(1, art.getNombre().trim().toUpperCase());
+			idCat=rs.getInt(Constantes.ID_DE_CATEGORIA);
+			st= con.getConnection().prepareStatement(Constantes.Insertar_en_articulos_Nombre_Precio_Categoria);
+			st.setString(1, art.getNombre());
 			st.setFloat(2, art.getPrecio());
 			st.setInt(3, idCat);
 			st.execute();
@@ -83,7 +82,7 @@ public class ArticuloDao {
 		Conexion con = new Conexion();
 		try {
 			con.conectar();
-			PreparedStatement st = con.getConnection().prepareStatement("UPDATE categorias SET nombreCat = (?) WHERE nombreCat = (?);");
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Update_NombreCategoria);
 			st.setString(1, nuevo);
 			st.setString(2, viejo);
 			st.executeUpdate();
@@ -101,7 +100,7 @@ public class ArticuloDao {
 		con.conectar();
 		PreparedStatement st;
 		try {
-			st = con.getConnection().prepareStatement("DELETE FROM categorias WHERE nombreCat=(?);");
+			st = con.getConnection().prepareStatement(Constantes.Delete_Categoria_Where_Nobre);
 			st.setString(1, valueAt);
 			st.execute();
 		} catch (SQLException e) {
@@ -117,7 +116,7 @@ public class ArticuloDao {
 		con.conectar();
 		PreparedStatement st;
 		try {
-			st = con.getConnection().prepareStatement("DELETE FROM articulos WHERE nombreArt=(?);");
+			st = con.getConnection().prepareStatement(Constantes.Delete_Articulo_Where_Nombre);
 			st.setString(1, valueAt);
 			st.execute();
 		} catch (SQLException e) {
@@ -131,12 +130,12 @@ public class ArticuloDao {
 		Conexion con = new Conexion();
 		con.conectar();
 		try {
-			PreparedStatement st = con.getConnection().prepareStatement("SELECT idArt FROM articulos WHERE nombreArt=(?);");
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Select_ID_Where_nombre);
 			st.setString(1, nombre);
 			ResultSet rs = st.executeQuery();
 			int idarticulo = 0;
 			while (rs.next()){
-				idarticulo=rs.getInt("idArt");
+				idarticulo=rs.getInt(Constantes.ID_DE_ARTICULO);
 			}
 			return idarticulo;
 		} catch (SQLException e) {
@@ -147,32 +146,47 @@ public class ArticuloDao {
 		}
 		return 0;
 	}
-	public void actualizarArticulo(Articulo art) {
+	public int obtenerIdCategoria(Articulo art){
 		Conexion con = new Conexion();
 		try {
 			con.conectar();
+			con.getConnection().setAutoCommit(true);
 			//Esta consulta es para obtener y guardar el numero de id de la categoria del art
 			int idCat=0;
-			PreparedStatement st = con.getConnection().prepareStatement("select * from categorias where nombreCat=(?);");
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Select_All_Categorias_Where_Nombre);
 			st.setString(1, art.getCategoria());
 			ResultSet rs = st.executeQuery();
 			while (rs.next()){
-				idCat=rs.getInt("idCat");
+				idCat=rs.getInt(Constantes.ID_DE_CATEGORIA);
 			}
+			return idCat;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			e.getMessage();
+			return -1;
+		}finally {
+			con.cerrar();
+		}
+	}
+	public void actualizarArticulo(Articulo art,String nombreViejo,int idCat) {
+		Conexion con = new Conexion();
+		try {
+			con.conectar();
+			con.getConnection().setAutoCommit(true);
 			//Esta consulta es para actualizar el art
-			System.out.println(art.getNombre());
-			st= con.getConnection().prepareStatement("Update articulos set nombreArt=?,precioArt=?,categoriaArt=? where idArt=?;");
+			PreparedStatement st= con.getConnection().prepareStatement(Constantes.Update_nombre_precio_categoria_where_idArt);
 			st.setString(1, art.getNombre());
 			st.setFloat(2, art.getPrecio());
 			st.setInt(3, idCat);
-			st.setInt(4, art.getId());
+			st.setString(4, nombreViejo);
 			st.executeUpdate();
-			JOptionPane.showMessageDialog(null, "Se actualizo ");
+			JOptionPane.showMessageDialog(null, "Se actualizo el articulo");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			e.getMessage();
 		}finally {
 			con.cerrar();
 		}
-	}	
+	}
 }

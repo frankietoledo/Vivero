@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 
 import controlador.Coordinador;
 import modelo.Conexion;
+import modelo.Constantes;
 
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -42,7 +43,6 @@ public class DetalleCategorias extends JFrame {
 	private Coordinador miCoordinador;
 	private JButton btnBorrarCategoria = new JButton("Borrar Categoria");
 	private JButton btnEditarCategoria = new JButton("Editar Categoria");
-	private Confirmacion confirmacion=new Confirmacion();
 	private boolean estado=false;
 	
 	public DetalleCategorias() {
@@ -167,24 +167,19 @@ public class DetalleCategorias extends JFrame {
 		vaciarTabla();
 		btnEditarCategoria.setEnabled(false);
 		btnBorrarCategoria.setEnabled(false);
+		//miCoordinador.cargarTablaCategorias(table);
 		Conexion con= new Conexion();
+		DefaultTableModel modelo = (DefaultTableModel) table.getModel();
 		try {
 			con.conectar();
-			PreparedStatement st = con.getConnection().prepareStatement("select "
-					+
-					"nombreCat from categorias order by nombreCat"
-					//"nombreArt,precioArt,categorias.nombreCat FROM articulos JOIN categorias on articulos.categoriaArt=categorias.idCat order by nombreArt"
-					+ ";");
-			ResultSet rs = st.executeQuery();
-			
-			
+			PreparedStatement st = con.getConnection().prepareStatement(Constantes.Select_NombreCat_from_Categorias_orderByNombre);
+			ResultSet rs = st.executeQuery();	
 			//Mediante una estructura con un while se va cargando la tabla elemento a elemento y atributo a atributo
 			while (rs.next()){
 				////Creamos un Objeto con tantos parámetros como datos retorne cada fila 
                 // de la consulta
 				Object[] fila = new Object[1];
-
-				fila[0]=rs.getString("nombreCat"); //se repite nombre porque hace referencia al nombre de la tabla categoria
+				fila[0]=rs.getString(Constantes.NOMBRE_DE_CATEGORIA); 
 				modelo.addRow(fila);
 			}				
 			table.updateUI(); //actualizar la tabla por los cambios		
